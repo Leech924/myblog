@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mappers.LinkMapper">
+    <resultMap id="LinkResult" type="Link">
+        <id property="id" column="id"/>
+        <result property="linkName" column="LinkName"/>
+        <result property="linkUrl" column="linkUrl"/>
+        <result property="orderNo" column="orderNo"/>
+    </resultMap>
+<!--    public Link queryForId();-->
+    <select id="queryForId" resultType="Link">
+        select * from t_link where id = #{id};
+    </select>
+<!--    public List<Link> list(Map<String,Object> paramMap);-->
+    <select id="list" resultMap="LinkResult" parameterType="Map">
+        select * from t_link
+        order by orderNo
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+<!--    public Long getTotal(Map<String,Object> paramMap);-->
+    <select id="getTotal" parameterType="Map" resultType="Long">
+        select count(*) from t_link;
+    </select>
+<!--    public Integer insertLink(Link Link);-->
+    <insert id="insertLink" parameterType="Link">
+        insert into t_link(linkName,linkUrl,orderNo) values(#{linkName},#{linkUrl},#{orderNo});
+    </insert>
+<!--    public Integer deleteLink(Integer id);-->
+    <delete id="deleteLink">
+        delete from t_link where id = #{id};
+    </delete>
+<!--    public Integer updateLink(Link Link);-->
+    <update id="updateLink" parameterType="Link">
+        update t_link sets
+        <set>
+            <if test="linkName!=null and linkName!=''">
+                linkName = #{linkName},
+            </if>
+            <if test="linkUrl!=null and linkUrl!=''">
+                linkUrl = #{linkUrl},
+            </if>
+            <if test="orderNo!=null">
+                orderNo = #{orderNo},
+            </if>
+        </set>
+            where id = #{id};
+    </update>
+</mapper>

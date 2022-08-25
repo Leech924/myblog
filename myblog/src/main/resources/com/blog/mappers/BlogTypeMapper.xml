@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mappers.BlogTypeMapper">
+    <resultMap id="BlogTypeResult" type="BlogType">
+        <id property="id" column="id"/>
+        <result property="typeName" column="typeName"/>
+        <result property="orderNo" column="orderNo"/>
+    </resultMap>
+<!--    public List<BlogType> queryForAll();-->
+    <select id="queryForAll" resultMap="BlogTypeResult">
+        select t1.id,t1.typeName,count(t2.id) as blogCount from t_blogtype t1 left join t_blog t2
+        on t1.id = t2.typeId group by t1.typeName order by t1.orderNo;
+    </select>
+<!--    public BlogType queryForId();-->
+    <select id="queryForId" resultType="BlogType">
+        select * from t_blogtype where id = #{id};
+    </select>
+<!--    public List<BlogType> queryForClass(Map<String,Object> paramMap);-->
+    <select id="queryForClass" resultMap="BlogTypeResult" parameterType="Map">
+        select * from t_blogtype
+        <if test="typeName!=null and typeName!=''">
+            where typeName = #{typeName}
+        </if>
+        order by orderNo
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+<!--    public Long getTotal(Map<String,Object> paramMap);-->
+    <select id="getTotal" parameterType="Map" resultType="Long">
+        select count(*) from t_blogtype;
+    </select>
+<!--    public Integer insertBlogType(BlogType blogType);-->
+    <insert id="insertBlogType" parameterType="BlogType">
+        insert into t_blogtype(typeName,orderNo) values(#{typeName},#{orderNo});
+    </insert>
+<!--    public Integer deleteBlogType(Integer id);-->
+    <delete id="deleteBlogType">
+        delete from t_blogtype where id = #{id};
+    </delete>
+<!--    public Integer updateBlogType(BlogType blogType);-->
+    <update id="updateBlogType" parameterType="BlogType">
+        update t_blogtype sets
+        <set>
+            <if test="typeName!=null and typeName!=''">
+                typeName = #{typeName},
+            </if>
+            <if test="orderNo!=null">
+                orderNo = #{orderNo},
+            </if>
+        </set>
+            where id = #{id};
+    </update>
+</mapper>
